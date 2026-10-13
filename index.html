@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E11167">
+<meta name="color-scheme" content="light">
+<title>Madurez Cerezas | Frutea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Madurez">
+<script src="libs/html2canvas.min.js"></script>
+<script src="libs/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --brand:#E11167; --brand-dk:#B00C50; --leaf:#8DB531;
+  --ink:#1C1B22; --ink2:#5B5866; --line:#E3E1E8; --surface:#F5F4F7; --card:#FFFFFF;
+  --ok:#2E8B57; --warn:#C77700; --bad:#C62828;
+  --c0:#EDB39A; --c1:#EF5A5F; --c2:#D7263D; --c3:#A61B2B; --c35:#7E1424; --c38:#5E0F1D; --c4:#3B0A12;
+  --font:"Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+input,select,textarea,button{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px}
+.top img{height:40px;width:40px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px var(--line)}
+.top h1{font-size:15px;font-weight:600;margin:0;color:var(--ink2);flex:1}
+.top .total{font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink2)}
+main{max-width:640px;margin:0 auto;padding:16px 16px 120px}
+.panel{display:none}
+.panel.on{display:block}
+h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 4px}
+.sub{color:var(--ink2);font-size:14px;margin:0 0 16px}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:16px}
+.field textarea{min-height:110px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus,.cell input:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.params{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:6px 0 16px}
+.params b{font-variant-numeric:tabular-nums;text-align:right}
+.params .hd{grid-column:1/-1;font-weight:700;color:var(--ink)}
+
+/* Color counters: the signature element */
+.scale{display:flex;flex-direction:column;gap:8px}
+.ctr{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 10px}
+.cherry{width:40px;height:40px;border-radius:50% 50% 46% 46%;position:relative;box-shadow:inset -6px -6px 10px rgba(0,0,0,.25), inset 4px 4px 8px rgba(255,255,255,.25)}
+.cherry::after{content:"";position:absolute;width:2px;height:12px;background:#5d7a1f;top:-9px;left:21px;border-radius:2px;transform:rotate(14deg)}
+.cherry::before{content:"";position:absolute;width:9px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);top:9px;left:10px}
+.ctr .nm{font-weight:600;font-size:15px;line-height:1.15}
+.ctr .nm small{display:block;color:var(--ink2);font-weight:500;font-size:12px;font-variant-numeric:tabular-nums}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:44px;height:44px;border-radius:12px;border:none;background:var(--surface);font-size:22px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.step button.plus{background:var(--brand);color:#fff}
+.step button:active{transform:scale(.94)}
+.step input{width:52px;height:44px;text-align:center;border:1px solid var(--line);border-radius:10px;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;background:var(--card)}
+.grp{font-size:12px;font-weight:700;color:var(--ink2);margin:14px 2px 2px}
+.sum{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600}
+.sum b{font-size:20px;font-variant-numeric:tabular-nums}
+.strip{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:10px;background:var(--line)}
+.strip i{display:block;height:100%}
+
+/* Brix */
+.bx{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.bx-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dot{width:14px;height:14px;border-radius:50%}
+.bx-h h3{margin:0;font-size:17px;flex:1}
+.bx-h .avg{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.bx-h .avg small{font-size:12px;font-weight:500;color:var(--ink2)}
+.cells{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.cell input{width:100%;height:48px;text-align:center;border:1px solid var(--line);border-radius:10px;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;background:var(--surface);padding:0}
+.bx-f{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--ink2)}
+.link{background:none;border:none;color:var(--brand);font-weight:700;padding:6px 0;cursor:pointer}
+
+/* Photos */
+.ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.ph div{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--line)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph button{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:16px}
+.upl{display:flex;gap:8px}
+.upl label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border:1.5px dashed var(--brand);color:var(--brand);border-radius:12px;font-weight:700;cursor:pointer;background:#fff}
+.upl input{display:none}
+
+.btn{display:flex;align-items:center;justify-content:center;width:100%;padding:16px;border:none;border-radius:14px;background:var(--brand);color:#fff;font-weight:700;font-size:17px;cursor:pointer;margin-top:16px}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.6}
+
+/* Bottom tabs */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{border:none;background:none;padding:10px 0 12px;font-size:12px;font-weight:600;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav button svg{width:22px;height:22px}
+nav button.on{color:var(--brand)}
+
+/* Report preview */
+.pv{overflow:hidden;border-radius:8px;box-shadow:0 2px 12px rgba(28,27,34,.12);background:#fff;margin-top:8px}
+.pv-in{transform-origin:top left}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+
+/* ===== Report (A4 794px) ===== */
+.rep{width:794px;padding:34px 38px 30px;background:#fff;color:#1C1B22;font-family:var(--font)}
+.rep-h{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:3px solid var(--brand);padding-bottom:12px}
+.rep-h img{height:40px}
+.rep-h .t{text-align:right}
+.rep-h .t b{display:block;font-size:20px;font-weight:800;letter-spacing:-.01em}
+.rep-h .t span{font-size:12px;color:#5B5866}
+.rep-info{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;overflow:hidden}
+.rep-info div{padding:7px 10px;border-right:1px solid #E3E1E8;border-bottom:1px solid #E3E1E8}
+.rep-info div:nth-child(3n){border-right:none}
+.rep-info div:nth-last-child(-n+3){border-bottom:none}
+.rep-info small{display:block;font-size:10px;color:#5B5866;font-weight:600}
+.rep-info b{font-size:13px;font-weight:700}
+.verdict{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:10px;margin-top:14px}
+.verdict>div{border-radius:8px;padding:10px 12px;background:#F5F4F7}
+.verdict .st{color:#fff}
+.verdict small{display:block;font-size:10px;font-weight:600;opacity:.85}
+.verdict b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.verdict em{font-style:normal;font-size:11px;opacity:.85}
+.verdict .st b{font-size:17px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.chart{border:1px solid #E3E1E8;border-radius:8px;padding:10px 12px 6px}
+.chart h4{margin:0 0 2px;font-size:13px;font-weight:700}
+.chart svg{display:block;width:100%;height:auto}
+.rphotos{display:grid;gap:6px;height:100%}
+.rphotos img{width:100%;height:100%;object-fit:cover;border-radius:6px;display:block}
+.nophoto{display:flex;align-items:center;justify-content:center;color:#9a97a3;font-size:12px;border:1px dashed #E3E1E8;border-radius:8px;height:100%;min-height:200px}
+.rscale{margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;padding:10px 12px}
+.rscale h4{margin:0 0 8px;font-size:13px}
+.rscale .bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:#F5F4F7}
+.rscale .bar i{display:block;height:100%}
+.rscale .lg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px;font-size:10px}
+.rscale .lg>span{display:flex;align-items:flex-start;gap:4px;line-height:1.15}
+.rscale .lg i{flex:none;width:9px;height:9px;border-radius:50%;margin-top:2px}
+.rscale .lg b{display:block;font-size:11px;font-variant-numeric:tabular-nums}
+.robs{margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;padding:10px 12px;min-height:70px}
+.robs h4{margin:0 0 4px;font-size:13px}
+.robs p{margin:0;font-size:12px;white-space:pre-wrap}
+.rfoot{display:flex;justify-content:space-between;margin-top:12px;font-size:10px;color:#5B5866}
+.rep-p2{margin-top:0}
+.rep-p2 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.rep-p2 img{width:100%;height:440px;object-fit:cover;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <img id="logoTop" src="icons/logo-header.png" alt="Frutea Group">
+  <h1>Análisis de madurez</h1>
+  <span class="total" id="topTotal"></span>
+</header>
+
+<main>
+  <!-- DATOS -->
+  <section class="panel on" id="p-datos">
+    <h2>Datos del muestreo</h2>
+    <p class="sub">Elige la variedad y se cargan sus parámetros de cosecha.</p>
+    <label class="field"><span>Productor</span><input id="f-productor" autocomplete="off"></label>
+    <label class="field"><span>Huerto</span><input id="f-huerto" autocomplete="off"></label>
+    <div class="row2">
+      <label class="field"><span>Variedad</span><select id="f-variedad"></select></label>
+      <label class="field"><span>Fecha muestreo</span><input type="date" id="f-fecha"></label>
+    </div>
+    <label class="field"><span>Cuartel</span><input id="f-cuartel" autocomplete="off"></label>
+    <label class="field"><span>Responsable</span><input id="f-resp" autocomplete="off" placeholder="Nombre de quien muestrea"></label>
+    <div class="params" id="params"></div>
+    <button class="btn" data-go="color">Contar color</button>
+    <button class="btn ghost" id="btnNew">Empezar ficha nueva</button>
+  </section>
+
+  <!-- COLOR -->
+  <section class="panel" id="p-color">
+    <h2>Color de cubrimiento</h2>
+    <p class="sub">Toca + por cada fruto. Toca el número para escribirlo directo.</p>
+    <div class="scale" id="scale"></div>
+    <div class="strip" id="strip"></div>
+    <div class="sum"><span>Frutos clasificados</span><b id="colTotal">0</b></div>
+    <button class="btn" data-go="brix">Ingresar °Brix</button>
+  </section>
+
+  <!-- BRIX -->
+  <section class="panel" id="p-brix">
+    <h2>Sólidos solubles</h2>
+    <p class="sub">Light agrupa colores 1, 2 y 3. Dark agrupa 3,5, 3,8 y 4. Usa coma o punto.</p>
+    <div id="brixBoxes"></div>
+    <button class="btn" data-go="calibre">Contar calibres</button>
+  </section>
+
+  <!-- CALIBRE -->
+  <section class="panel" id="p-calibre">
+    <h2>Calibre</h2>
+    <p class="sub">Frutos por anillo del calibrador.</p>
+    <div class="scale" id="calScale"></div>
+    <div class="sum"><span>Frutos calibrados</span><b id="calTotal">0</b></div>
+    <h2 style="margin-top:26px;font-size:20px">Fotos y observaciones</h2>
+    <p class="sub">Las fotos de la distribución de color salen en la ficha.</p>
+    <div class="upl">
+      <label><input type="file" accept="image/*" capture="environment" id="camIn">Tomar foto</label>
+      <label><input type="file" accept="image/*" multiple id="fileIn">Añadir archivo</label>
+    </div>
+    <div class="ph" id="phGrid"></div>
+    <label class="field" style="margin-top:14px"><span>Observaciones</span><textarea id="f-obs" placeholder="Estado de la fruta, partiduras, recomendación de inicio de cosecha…"></textarea></label>
+    <button class="btn" data-go="ficha">Ver ficha</button>
+  </section>
+
+  <!-- FICHA -->
+  <section class="panel" id="p-ficha">
+    <h2>Ficha lista</h2>
+    <p class="sub">Así la verá el productor. Revisa y exporta.</p>
+    <button class="btn" id="btnPdf">Exportar PDF</button>
+    <div class="pv" id="pv"><div class="pv-in" id="pvIn"></div></div>
+  </section>
+</main>
+
+<nav id="nav">
+  <button data-go="datos" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Datos</button>
+  <button data-go="color"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="16" r="4.5"/><circle cx="16.5" cy="15" r="4"/><path d="M9 11.5c1-4 3-7 7-8.5M16.5 11c-.5-3-.3-5.5-.5-8"/></svg>Color</button>
+  <button data-go="brix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>°Brix</button>
+  <button data-go="calibre"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/></svg>Calibre</button>
+  <button data-go="ficha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Ficha</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const LOGO = "data:image/png;base64,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";
+
+// Parámetros por variedad (hoja "Parámetros")
+const VAR = [
+ ["Bing","Rojo",.15,"Santina","Caoba oscuro",.40,70,80,18],
+ ["Lapins","Rojo",.30,"Rojo caoba","Caoba oscuro",.30,70,80,17],
+ ["Royal Dawn","Rojo",.15,"Santina","Caoba oscuro",.35,70,80,17],
+ ["Kordia","Santina",.15,"Caoba oscuro","Negro",.05,70,80,18],
+ ["Santina","Rojo",.30,"Santina","Caoba oscuro",.30,70,80,15],
+ ["Sweet Heart","Rojo",.30,"Santina","Caoba oscuro",.30,70,80,18],
+ ["Nimba","Rojo",.15,"Rojo caoba","Caoba oscuro",.30,70,85,17],
+ ["Regina","Rojo",.10,"Rojo caoba","Caoba oscuro",.40,70,80,18],
+ ["Van","Rojo",.20,"Rojo caoba","Caoba oscuro",.10,70,75,16.5],
+ ["Skeena","Rojo",.15,"Rojo caoba","Caoba oscuro",.15,70,80,17],
+ ["Sweet Aryana - Barco","Rojo",.10,"Caoba","Caoba oscuro",.30,70,80,19],
+ ["Sweet Aryana - Aéreo","Rojo",.10,"Caoba","Caoba oscuro",.30,70,80,21],
+ ["Pacific Red","Rojo",.10,"Caoba","Caoba oscuro",.30,70,80,17]
+].map(v=>({n:v[0],ini:v[1],iniMax:v[2],opt:v[3],sob:v[4],sobMax:v[5],fmin:v[6],fopt:v[7],brix:v[8]}));
+
+// Escala de color 0 a 4
+const COL = [
+ {k:"0",lab:"Falta color",c:"var(--c0)",hex:"#EDB39A",g:"falta"},
+ {k:"1",lab:"Rojo claro",c:"var(--c1)",hex:"#EF5A5F",g:"light"},
+ {k:"2",lab:"Rojo",c:"var(--c2)",hex:"#D7263D",g:"light"},
+ {k:"3",lab:"Rojo caoba",c:"var(--c3)",hex:"#A61B2B",g:"light"},
+ {k:"3,5",lab:"Caoba",c:"var(--c35)",hex:"#7E1424",g:"dark"},
+ {k:"3,8",lab:"Regina",c:"var(--c38)",hex:"#5E0F1D",g:"dark"},
+ {k:"4",lab:"Caoba oscuro",c:"var(--c4)",hex:"#3B0A12",g:"dark"}
+];
+// nombre de color en parámetros -> índice en la escala
+const CIDX = {"falta color":0,"rojo claro":1,"rojo":2,"rojo caoba":3,"caoba":4,"santina":5,"regina":5,"caoba oscuro":6,"negro":6};
+
+const CAL = [
+ {k:"L",r:"22-24 mm",mid:23},{k:"XL",r:"24-26 mm",mid:25},{k:"J",r:"26-28 mm",mid:27},
+ {k:"2J",r:"28-30 mm",mid:29},{k:"3J",r:"30-32 mm",mid:31},{k:"4J",r:"32-34 mm",mid:33},{k:"5J",r:"> 34 mm",mid:35}
+];
+const GROUPS = {falta:{lab:"Falta color",hex:"#EDB39A"},light:{lab:"Light",hex:"#D7263D"},dark:{lab:"Dark",hex:"#5E0F1D"}};
+
+const blank = () => ({productor:"",huerto:"",variedad:"Royal Dawn",cuartel:"",fecha:new Date().toISOString().slice(0,10),resp:"",
+  col:COL.map(()=>0), cal:CAL.map(()=>0), brix:{light:["","","","",""],dark:["","","","",""]}, obs:"", photos:[]});
+let S = blank();
+try{ const s = JSON.parse(localStorage.getItem("madurez-ficha")); if(s && s.col) S = Object.assign(blank(), s); }catch(e){}
+
+const $ = id => document.getElementById(id);
+const num = v => { const n = parseFloat(String(v).replace(",",".")); return isFinite(n)?n:null; };
+const fmt = (n,d=1) => n==null||isNaN(n) ? "–" : n.toLocaleString("es-CL",{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct = (n,d=0) => n==null||isNaN(n) ? "–" : fmt(n*100,d)+"%";
+const sum = a => a.reduce((x,y)=>x+y,0);
+let saveT;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem("madurez-ficha", JSON.stringify(S)); }catch(e){ try{ localStorage.setItem("madurez-ficha", JSON.stringify(Object.assign({},S,{photos:[]}))); }catch(_){} } },300); }
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("on"); setTimeout(()=>el.classList.remove("on"),2200); }
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- Cálculos ---------- */
+function calc(){
+  const v = VAR.find(x=>x.n===S.variedad) || VAR[0];
+  const nCol = sum(S.col), nCal = sum(S.cal);
+  const colP = S.col.map(x=> nCol? x/nCol : 0);
+  const g = {falta:0,light:0,dark:0}; COL.forEach((c,i)=> g[c.g]+=S.col[i]);
+  const gP = {falta:nCol?g.falta/nCol:0, light:nCol?g.light/nCol:0, dark:nCol?g.dark/nCol:0};
+  const bx = {};
+  ["light","dark"].forEach(k=>{
+    const vals = S.brix[k].map(num).filter(x=>x!=null);
+    bx[k] = {n:vals.length, avg: vals.length? sum(vals)/vals.length : null, min:vals.length?Math.min(...vals):null, max:vals.length?Math.max(...vals):null};
+  });
+  // °Brix ponderado por la proporción light/dark
+  let wB=null;
+  const wl = bx.light.avg!=null ? g.light : 0, wd = bx.dark.avg!=null ? g.dark : 0;
+  if(wl+wd>0) wB = ((bx.light.avg||0)*wl + (bx.dark.avg||0)*wd)/(wl+wd);
+  else if(bx.light.avg!=null||bx.dark.avg!=null){ const a=[bx.light.avg,bx.dark.avg].filter(x=>x!=null); wB=sum(a)/a.length; }
+  const iIni = CIDX[v.ini.toLowerCase()] ?? 2, iSob = CIDX[v.sob.toLowerCase()] ?? 6;
+  const pIni = nCol? sum(S.col.slice(0,iIni+1))/nCol : null;
+  const pSob = nCol? sum(S.col.slice(iSob))/nCol : null;
+  const calP = S.cal.map(x=> nCal? x/nCal : 0);
+  let dom=null; if(nCal){ const m=Math.max(...S.cal); dom = CAL[S.cal.indexOf(m)]; }
+  const dMed = nCal? sum(S.cal.map((x,i)=>x*CAL[i].mid))/nCal : null;
+  const pJ = nCal? sum(S.cal.slice(2))/nCal : null;
+  // Diagnóstico
+  let st = {t:"Faltan datos",c:"#5B5866",d:"Completa color y °Brix"};
+  if(nCol && wB!=null){
+    const colorOk = pIni <= v.iniMax, brixOk = wB >= v.brix, sobOk = pSob <= v.sobMax;
+    if(!sobOk) st={t:"Riesgo de sobremadurez",c:"#C62828",d:`${pct(pSob)} en ${v.sob.toLowerCase()} o más (límite ${pct(v.sobMax)})`};
+    else if(colorOk && brixOk) st={t:"Apta para iniciar cosecha",c:"#2E8B57",d:"Cumple color y °Brix"};
+    else if(colorOk || brixOk) st={t:"Cerca de cosecha",c:"#C77700",d: colorOk? `°Brix bajo el óptimo (${fmt(v.brix)})` : `Exceso de fruta en ${v.ini.toLowerCase()} o menor`};
+    else st={t:"Aún no iniciar",c:"#C62828",d:"No cumple color ni °Brix"};
+  }
+  return {v,nCol,nCal,colP,g,gP,bx,wB,pIni,pSob,calP,dom,dMed,pJ,st,iIni};
+}
+
+/* ---------- Render entradas ---------- */
+function renderParams(){
+  const v = VAR.find(x=>x.n===S.variedad) || VAR[0];
+  $("params").innerHTML = `<span class="hd">Parámetros ${esc(v.n)}</span>
+   <span>Color óptimo</span><b>${esc(v.opt)}</b>
+   <span>No iniciar si ${esc(v.ini.toLowerCase())} o menor supera</span><b>${pct(v.iniMax)}</b>
+   <span>Sobremadurez: ${esc(v.sob.toLowerCase())} sobre</span><b>${pct(v.sobMax)}</b>
+   <span>°Brix óptimo</span><b>${fmt(v.brix)}</b>
+   <span>Firmeza mín / óptima (Durofel)</span><b>${v.fmin} / ${v.fopt}</b>`;
+}
+function counterRow(i, arr, title, subtitle, swatch, plain){
+  return `<div class="ctr">${swatch}
+    <div class="nm">${title}<small id="${arr}-p-${i}">${subtitle}</small></div>
+    <div class="step"><button aria-label="Restar" data-arr="${arr}" data-i="${i}" data-d="-1">−</button>
+    <input inputmode="numeric" pattern="[0-9]*" data-arr="${arr}" data-i="${i}" value="${S[arr][i]||""}" placeholder="0" aria-label="${esc(plain)}">
+    <button class="plus" aria-label="Sumar" data-arr="${arr}" data-i="${i}" data-d="1">+</button></div></div>`;
+}
+function renderCounters(){
+  let h="", last="";
+  COL.forEach((c,i)=>{
+    if(c.g!==last){ h+=`<div class="grp">${c.g==="falta"?"Sin color":c.g==="light"?"Light":"Dark"}</div>`; last=c.g; }
+    h+=counterRow(i,"col",`<b style="font-weight:800;color:var(--ink2);margin-right:4px">${c.k}</b>${c.lab}`,"0%",`<div class="cherry" style="background:${c.c}"></div>`, c.lab);
+  });
+  $("scale").innerHTML=h;
+  $("calScale").innerHTML = CAL.map((c,i)=>counterRow(i,"cal",`${c.k} <span style="font-weight:500;color:var(--ink2)">${c.r}</span>`,"0%",
+    `<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="${9+i*1.6}" fill="none" stroke="var(--brand)" stroke-width="3"/></svg>`, "Calibre "+c.k)).join("");
+}
+function renderBrix(){
+  $("brixBoxes").innerHTML = ["light","dark"].map(k=>`
+   <div class="bx"><div class="bx-h"><span class="dot" style="background:${GROUPS[k].hex}"></span><h3>${GROUPS[k].lab}</h3>
+   <span class="avg" id="bx-avg-${k}">–</span></div>
+   <div class="cells">${S.brix[k].map((v,j)=>`<div class="cell"><input inputmode="decimal" enterkeyhint="next" data-bx="${k}" data-j="${j}" value="${esc(v)}" placeholder="${j+1}" aria-label="°Brix ${GROUPS[k].lab} ${j+1}"></div>`).join("")}</div>
+   <div class="bx-f"><span id="bx-rg-${k}"></span><span><button class="link" data-addbx="${k}">+ Agregar lectura</button></span></div></div>`).join("");
+}
+function renderPhotos(){
+  $("phGrid").innerHTML = S.photos.map((p,i)=>`<div><img src="${p}" alt="Foto ${i+1}"><button data-delph="${i}" aria-label="Quitar foto">×</button></div>`).join("");
+}
+function updateLive(){
+  const R = calc();
+  S.col.forEach((x,i)=>{ const el=$("col-p-"+i); if(el) el.textContent = pct(R.colP[i]); });
+  S.cal.forEach((x,i)=>{ const el=$("cal-p-"+i); if(el) el.textContent = pct(R.calP[i]); });
+  $("colTotal").textContent=R.nCol; $("calTotal").textContent=R.nCal;
+  $("strip").innerHTML = R.nCol? COL.map((c,i)=>`<i style="width:${R.colP[i]*100}%;background:${c.c}"></i>`).join("") : "";
+  ["light","dark"].forEach(k=>{
+    const b=R.bx[k]; const a=$("bx-avg-"+k); if(!a) return;
+    a.innerHTML = b.avg!=null? `${fmt(b.avg)} <small>°Brix</small>` : "–";
+    $("bx-rg-"+k).textContent = b.n? `${b.n} lecturas, rango ${fmt(b.min)} a ${fmt(b.max)}` : "Sin lecturas";
+  });
+  $("topTotal").textContent = R.nCol? `${R.nCol} frutos` : "";
+}
+
+/* ---------- Gráficos SVG ---------- */
+function svgCalibre(R){
+  const W=340,H=210,pl=8,pb=36,pt=22, n=CAL.length, bw=(W-pl*2)/n;
+  const max = Math.max(.6, ...R.calP)*1.12;
+  let s=`<svg viewBox="0 0 ${W} ${H}" font-family="Archivo, sans-serif">`;
+  [0,.25,.5].forEach(t=>{ if(t>max) return; const y=H-pb-(t/max)*(H-pb-pt); s+=`<line x1="${pl}" x2="${W-pl}" y1="${y}" y2="${y}" stroke="#ECEAF0"/>`; });
+  CAL.forEach((c,i)=>{
+    const v=R.calP[i], h=(v/max)*(H-pb-pt), x=pl+i*bw+bw*.16, w=bw*.68, y=H-pb-h;
+    const isDom = R.dom && R.dom.k===c.k;
+    s+=`<rect x="${x}" y="${y}" width="${w}" height="${Math.max(h,0)}" rx="4" fill="${isDom?"#E11167":"#F39ABF"}"/>`;
+    s+=`<text x="${x+w/2}" y="${y-5}" text-anchor="middle" font-size="11" font-weight="700" fill="#1C1B22">${pct(v)}</text>`;
+    s+=`<text x="${x+w/2}" y="${H-pb+15}" text-anchor="middle" font-size="11" font-weight="700" fill="#1C1B22">${c.k}</text>`;
+    s+=`<text x="${x+w/2}" y="${H-pb+28}" text-anchor="middle" font-size="8.5" fill="#5B5866">${c.r.replace(" mm","")}</text>`;
+  });
+  s+=`<line x1="${pl}" x2="${W-pl}" y1="${H-pb}" y2="${H-pb}" stroke="#BDBAC6"/></svg>`;
+  return s;
+}
+function svgBrix(R){
+  const W=340,H=210,pb=30,pt=24,pl=30;
+  const vals=[R.bx.light.avg,R.bx.dark.avg].filter(x=>x!=null);
+  const top = Math.ceil(Math.max(R.v.brix, ...vals, 10)/5)*5+2, lo=0;
+  const Y = v => H-pb-((v-lo)/(top-lo))*(H-pb-pt);
+  let s=`<svg viewBox="0 0 ${W} ${H}" font-family="Archivo, sans-serif">`;
+  for(let t=0;t<=top;t+=5){ s+=`<line x1="${pl}" x2="${W-8}" y1="${Y(t)}" y2="${Y(t)}" stroke="#ECEAF0"/><text x="${pl-6}" y="${Y(t)+3}" text-anchor="end" font-size="9" fill="#5B5866">${t}</text>`; }
+  [["light","Light","#D7263D"],["dark","Dark","#5E0F1D"]].forEach(([k,l,c],i)=>{
+    const b=R.bx[k], cx = pl+(W-pl)*(i===0?.3:.72), w=78;
+    if(b.avg!=null){
+      s+=`<rect x="${cx-w/2}" y="${Y(b.avg)}" width="${w}" height="${H-pb-Y(b.avg)}" rx="5" fill="${c}"/>`;
+      s+=`<text x="${cx}" y="${Y(b.avg)-7}" text-anchor="middle" font-size="14" font-weight="800" fill="#1C1B22">${fmt(b.avg)}</text>`;
+    } else s+=`<text x="${cx}" y="${H-pb-8}" text-anchor="middle" font-size="10" fill="#9a97a3">sin datos</text>`;
+    s+=`<text x="${cx}" y="${H-pb+16}" text-anchor="middle" font-size="11" font-weight="700" fill="#1C1B22">${l}</text>`;
+  });
+  const yo=Y(R.v.brix);
+  s+=`<line x1="${pl}" x2="${W-8}" y1="${yo}" y2="${yo}" stroke="#8DB531" stroke-width="2" stroke-dasharray="5 4"/>`;
+  s+=`<line x1="${W-96}" x2="${W-78}" y1="8" y2="8" stroke="#8DB531" stroke-width="2" stroke-dasharray="5 4"/><text x="${W-8}" y="11" text-anchor="end" font-size="10" font-weight="700" fill="#5d7a1f">Óptimo ${fmt(R.v.brix)}</text>`;
+  s+=`<line x1="${pl}" x2="${W-8}" y1="${H-pb}" y2="${H-pb}" stroke="#BDBAC6"/></svg>`;
+  return s;
+}
+function svgDonut(R){
+  const W=340,H=210,cx=105,cy=105,r=78,ri=46;
+  const parts=["falta","light","dark"].map(k=>({k,v:R.gP[k],hex:GROUPS[k].hex,lab:GROUPS[k].lab}));
+  let s=`<svg viewBox="0 0 ${W} ${H}" font-family="Archivo, sans-serif">`, a=-Math.PI/2;
+  if(!R.nCol) s+=`<circle cx="${cx}" cy="${cy}" r="${(r+ri)/2}" fill="none" stroke="#ECEAF0" stroke-width="${r-ri}"/>`;
+  parts.forEach(p=>{
+    if(p.v<=0) return;
+    if(p.v>=.9999){ s+=`<circle cx="${cx}" cy="${cy}" r="${(r+ri)/2}" fill="none" stroke="${p.hex}" stroke-width="${r-ri}"/>`; return; }
+    const b=a+p.v*2*Math.PI, L=p.v>.5?1:0;
+    const P=(ang,rad)=>`${cx+rad*Math.cos(ang)} ${cy+rad*Math.sin(ang)}`;
+    s+=`<path d="M${P(a,r)} A${r} ${r} 0 ${L} 1 ${P(b,r)} L${P(b,ri)} A${ri} ${ri} 0 ${L} 0 ${P(a,ri)}Z" fill="${p.hex}" stroke="#fff" stroke-width="2"/>`;
+    a=b;
+  });
+  s+=`<text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="22" font-weight="800" fill="#1C1B22">${R.nCol}</text><text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" fill="#5B5866">frutos</text>`;
+  parts.forEach((p,i)=>{ const y=60+i*42;
+    s+=`<rect x="210" y="${y-11}" width="14" height="14" rx="3" fill="${p.hex}"/><text x="232" y="${y}" font-size="12" fill="#5B5866">${p.lab}</text><text x="232" y="${y+18}" font-size="17" font-weight="800" fill="#1C1B22">${pct(p.v)}</text>`; });
+  return s+`</svg>`;
+}
+
+/* ---------- Ficha ---------- */
+function reportHTML(){
+  const R=calc(); const d = S.fecha? S.fecha.split("-").reverse().join("-") : "";
+  const ph = S.photos.slice(0,4);
+  const phHTML = ph.length ? `<div class="rphotos" style="grid-template-columns:${ph.length>1?"1fr 1fr":"1fr"};grid-template-rows:${ph.length>2?"1fr 1fr":"1fr"}">${ph.map(p=>`<img src="${p}">`).join("")}</div>` : `<div class="nophoto">Sin fotos</div>`;
+  const extra = S.photos.slice(4);
+  return `<div class="rep" id="repPage1">
+   <div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Análisis de madurez de cerezas</b><span>Muestreo ${esc(d)}</span></div></div>
+   <div class="rep-info">
+     <div><small>Productor</small><b>${esc(S.productor)||"–"}</b></div>
+     <div><small>Huerto</small><b>${esc(S.huerto)||"–"}</b></div>
+     <div><small>Variedad</small><b>${esc(S.variedad)}</b></div>
+     <div><small>Cuartel</small><b>${esc(S.cuartel)||"–"}</b></div>
+     <div><small>Fecha muestreo</small><b>${esc(d)}</b></div>
+     <div><small>Muestra</small><b>${R.nCol} frutos color, ${R.nCal} calibre</b></div>
+   </div>
+   <div class="verdict">
+     <div class="st" style="background:${R.st.c}"><small>Diagnóstico</small><b>${R.st.t}</b><em>${esc(R.st.d)}</em></div>
+     <div><small>°Brix ponderado</small><b>${fmt(R.wB)}</b><em>Óptimo ${fmt(R.v.brix)}</em></div>
+     <div><small>${esc(R.v.ini)} o menor</small><b>${pct(R.pIni)}</b><em>Máximo para iniciar ${pct(R.v.iniMax)}</em></div>
+     <div><small>Calibre predominante</small><b>${R.dom?R.dom.k:"–"}</b><em>${R.dMed?`Ø medio ${fmt(R.dMed)} mm, J o más ${pct(R.pJ)}`:"Sin calibres"}</em></div>
+   </div>
+   <div class="g2">
+     <div class="chart"><h4>Distribución de calibres (%)</h4>${svgCalibre(R)}</div>
+     <div>${phHTML}</div>
+   </div>
+   <div class="g2">
+     <div class="chart"><h4>Sólidos solubles (°Brix)</h4>${svgBrix(R)}</div>
+     <div class="chart"><h4>Distribución de colores (%)</h4>${svgDonut(R)}</div>
+   </div>
+   <div class="rscale"><h4>Escala de color completa</h4>
+     <div class="bar">${COL.map((c,i)=>`<i style="width:${R.colP[i]*100}%;background:${c.hex}"></i>`).join("")}</div>
+     <div class="lg">${COL.map((c,i)=>`<span><i style="background:${c.hex}"></i><span>${c.k} ${c.lab}<b>${pct(R.colP[i])}</b></span></span>`).join("")}</div>
+   </div>
+   <div class="robs"><h4>Observaciones</h4><p>${esc(S.obs)||"Sin observaciones."}</p></div>
+   <div class="rfoot"><span>${S.resp?"Responsable: "+esc(S.resp):""}</span><span>Frutea Group</span></div>
+  </div>
+  ${extra.length?`<div class="rep rep-p2" id="repPage2"><div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Registro fotográfico</b><span>${esc(S.variedad)}, ${esc(S.cuartel)}</span></div></div><div class="grid">${extra.map(p=>`<img src="${p}">`).join("")}</div></div>`:""}`;
+}
+function renderFicha(){
+  const pv=$("pv"), inn=$("pvIn");
+  inn.innerHTML = reportHTML();
+  requestAnimationFrame(()=>{
+    const sc = pv.clientWidth/794; inn.style.transform=`scale(${sc})`;
+    pv.style.height = (inn.scrollHeight*sc)+"px";
+  });
+}
+
+/* ---------- PDF ---------- */
+async function exportPDF(){
+  const btn=$("btnPdf"); btn.disabled=true; btn.textContent="Generando PDF…";
+  try{
+    const host=document.createElement("div");
+    host.style.cssText="position:fixed;left:-10000px;top:0;width:794px";
+    host.innerHTML=reportHTML(); document.body.appendChild(host);
+    await Promise.all([...host.querySelectorAll("img")].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
+    if(document.fonts) await document.fonts.ready;
+    const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+    const pages=[...host.querySelectorAll(".rep")];
+    for(let i=0;i<pages.length;i++){
+      const cv = await html2canvas(pages[i],{scale:2,backgroundColor:"#ffffff",useCORS:true});
+      const w=210, h=cv.height*w/cv.width;
+      if(i>0) pdf.addPage();
+      if(h<=297){ pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",0,0,w,h); }
+      else { const k=297/h; pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",(210-w*k)/2,0,w*k,297); }
+    }
+    host.remove();
+    const name = `Madurez_${S.variedad}_${S.cuartel||"cuartel"}_${S.fecha}`.replace(/[^\wáéíóúñÁÉÍÓÚÑ-]+/g,"_")+".pdf";
+    const blob = pdf.output("blob"); const file = new File([blob],name,{type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:name}); }catch(e){ if(e.name!=="AbortError") throw e; }
+    } else {
+      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("PDF descargado");
+    }
+  }catch(e){ console.error(e); toast("No se pudo generar el PDF. Revisa la conexión e intenta otra vez."); }
+  btn.disabled=false; btn.textContent="Exportar PDF";
+}
+
+/* ---------- Fotos ---------- */
+function addFiles(files){
+  [...files].forEach(f=>{
+    if(!f.type.startsWith("image/")) return;
+    const img=new Image(), url=URL.createObjectURL(f);
+    img.onload=()=>{
+      const M=1200, k=Math.min(1,M/Math.max(img.width,img.height));
+      const c=document.createElement("canvas"); c.width=img.width*k; c.height=img.height*k;
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      if(S.photos.length>=8){ toast("Máximo 8 fotos"); return; }
+      S.photos.push(c.toDataURL("image/jpeg",.8)); URL.revokeObjectURL(url); renderPhotos(); save();
+    };
+    img.src=url;
+  });
+}
+
+/* ---------- Navegación y eventos ---------- */
+function go(p){
+  document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===p));
+  if(p==="ficha") renderFicha();
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button"); if(!t) return;
+  if(t.dataset.go) return go(t.dataset.go);
+  if(t.dataset.d){ const a=t.dataset.arr,i=+t.dataset.i; S[a][i]=Math.max(0,(S[a][i]||0)+ +t.dataset.d);
+    const inp=t.parentElement.querySelector("input"); inp.value=S[a][i]||""; if(navigator.vibrate) navigator.vibrate(8); updateLive(); save(); }
+  if(t.dataset.addbx){ S.brix[t.dataset.addbx].push(""); renderBrix(); updateLive(); save();
+    const ins=document.querySelectorAll(`[data-bx="${t.dataset.addbx}"]`); ins[ins.length-1].focus(); }
+  if(t.dataset.delph){ S.photos.splice(+t.dataset.delph,1); renderPhotos(); save(); }
+});
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.arr){ S[t.dataset.arr][+t.dataset.i]=Math.max(0,parseInt(t.value)||0); updateLive(); save(); }
+  if(t.dataset.bx){ S.brix[t.dataset.bx][+t.dataset.j]=t.value; updateLive(); save(); }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && e.target.dataset.bx){ e.preventDefault();
+    const all=[...document.querySelectorAll("[data-bx]")]; const n=all[all.indexOf(e.target)+1]; if(n) n.focus(); else e.target.blur(); }
+});
+document.addEventListener("focusin",e=>{ if(e.target.dataset.arr) e.target.select(); });
+const bind=(id,key,cb)=>{ const el=$(id); el.value=S[key]||""; el.addEventListener("input",()=>{ S[key]=el.value; save(); cb&&cb(); }); };
+$("f-variedad").innerHTML = VAR.map(v=>`<option>${esc(v.n)}</option>`).join("");
+bind("f-productor","productor"); bind("f-huerto","huerto"); bind("f-cuartel","cuartel"); bind("f-resp","resp");
+bind("f-fecha","fecha"); bind("f-obs","obs"); bind("f-variedad","variedad",renderParams);
+$("f-variedad").addEventListener("change",()=>{ S.variedad=$("f-variedad").value; renderParams(); save(); });
+$("camIn").addEventListener("change",e=>{ addFiles(e.target.files); e.target.value=""; });
+$("fileIn").addEventListener("change",e=>{ addFiles(e.target.files); e.target.value=""; });
+$("btnPdf").addEventListener("click",exportPDF);
+$("btnNew").addEventListener("click",()=>{
+  if(!confirm("¿Borrar los datos actuales y empezar una ficha nueva? Se mantienen productor, huerto y responsable.")) return;
+  const keep={productor:S.productor,huerto:S.huerto,resp:S.resp}; S=Object.assign(blank(),keep);
+  ["f-productor","f-huerto","f-cuartel","f-resp","f-fecha","f-obs","f-variedad"].forEach(id=>{ $(id).value=S[id.slice(2)]||""; });
+  init(); toast("Ficha nueva lista");
+});
+window.addEventListener("resize",()=>{ if($("p-ficha").classList.contains("on")) renderFicha(); });
+function init(){ $("f-variedad").value=S.variedad; renderParams(); renderCounters(); renderBrix(); renderPhotos(); updateLive(); }
+init();
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+</body>
+</html>
