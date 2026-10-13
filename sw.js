@@ -1,10 +1,10 @@
 // Cambia el número de versión cada vez que subas cambios a GitHub
-const CACHE = "madurez-v1";
+const CACHE = "madurez-v2";
 const FILES = [
   "./", "./index.html", "./manifest.json",
-  "./libs/html2canvas.min.js", "./libs/jspdf.umd.min.js",
-  "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png",
-  "./icons/apple-touch-icon.png", "./icons/favicon.png", "./icons/logo-header.png"
+  "./html2canvas.min.js", "./jspdf.umd.min.js",
+  "./icon-192.png", "./icon-512.png", "./maskable-512.png",
+  "./apple-touch-icon.png", "./favicon.png", "./logo-header.png"
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
