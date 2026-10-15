@@ -32,14 +32,15 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
 input,select,textarea,button{font:inherit;color:inherit}
-.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px}
-.top img{height:40px;width:40px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px var(--line)}
-.top h1{font-size:15px;font-weight:600;margin:0;color:var(--ink2);flex:1}
-.top .total{font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink2)}
+.top{position:sticky;top:0;z-index:5;background:linear-gradient(100deg,#E11167,#B00C50);color:#fff;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.top img{height:26px;width:auto}
+.top h1{font-size:15px;font-weight:600;margin:0;color:#fff;opacity:.92;flex:1;text-align:right}
+.top .total{font-variant-numeric:tabular-nums;font-size:13px;color:#fff;background:rgba(255,255,255,.18);padding:3px 9px;border-radius:20px}
+.top .total:empty{display:none}
 main{max-width:640px;margin:0 auto;padding:16px 16px 120px}
 .panel{display:none}
 .panel.on{display:block}
-h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 4px}
+h2{font-size:24px;font-weight:800;color:var(--brand-dk);letter-spacing:-.01em;margin:4px 0 4px}
 .sub{color:var(--ink2);font-size:14px;margin:0 0 16px}
 .field{display:block;margin-bottom:12px}
 .field span{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
@@ -47,9 +48,9 @@ h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 4px}
 .field textarea{min-height:110px;resize:vertical}
 .field input:focus,.field select:focus,.field textarea:focus,.cell input:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.params{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:6px 0 16px}
+.params{background:#FDEEF4;border:1px solid #F7C4D9;border-radius:12px;padding:12px 14px;font-size:14px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:6px 0 16px}
 .params b{font-variant-numeric:tabular-nums;text-align:right}
-.params .hd{grid-column:1/-1;font-weight:700;color:var(--ink)}
+.params .hd{grid-column:1/-1;font-weight:700;color:var(--brand)}
 
 /* Color counters: the signature element */
 .scale{display:flex;flex-direction:column;gap:8px}
@@ -64,8 +65,8 @@ h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 4px}
 .step button.plus{background:var(--brand);color:#fff}
 .step button:active{transform:scale(.94)}
 .step input{width:52px;height:44px;text-align:center;border:1px solid var(--line);border-radius:10px;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;background:var(--card)}
-.grp{font-size:12px;font-weight:700;color:var(--ink2);margin:14px 2px 2px}
-.sum{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600}
+.grp{font-size:12px;font-weight:700;color:var(--brand);margin:14px 2px 2px}
+.sum{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--brand-dk);color:#fff;font-weight:600}
 .sum b{font-size:20px;font-variant-numeric:tabular-nums}
 .strip{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:10px;background:var(--line)}
 .strip i{display:block;height:100%}
@@ -90,13 +91,18 @@ h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 4px}
 .upl{display:flex;gap:8px}
 .upl label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border:1.5px dashed var(--brand);color:var(--brand);border-radius:12px;font-weight:700;cursor:pointer;background:#fff}
 .upl input{display:none}
+.phsec{margin-top:16px}
+.phsec h3{font-size:15px;margin:0 0 8px;color:var(--ink)}
+.phsec h3 small{font-weight:500;color:var(--ink2)}
+.rphotos figure,.rep-p2 figure{margin:0;position:relative;overflow:hidden;border-radius:6px;min-height:0}
+.rphotos figcaption,.rep-p2 figcaption{position:absolute;left:6px;bottom:6px;background:rgba(176,12,80,.92);color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px}
 
 .btn{display:flex;align-items:center;justify-content:center;width:100%;padding:16px;border:none;border-radius:14px;background:var(--brand);color:#fff;font-weight:700;font-size:17px;cursor:pointer;margin-top:16px}
 .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .btn:disabled{opacity:.6}
 
 /* Bottom tabs */
-nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:3px solid var(--brand);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
 nav button{border:none;background:none;padding:10px 0 12px;font-size:12px;font-weight:600;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 nav button svg{width:22px;height:22px}
 nav button.on{color:var(--brand)}
@@ -132,7 +138,7 @@ nav button.on{color:var(--brand)}
 .chart h4{margin:0 0 2px;font-size:13px;font-weight:700}
 .chart svg{display:block;width:100%;height:auto}
 .rphotos{display:grid;gap:6px;height:100%}
-.rphotos img{width:100%;height:100%;object-fit:cover;border-radius:6px;display:block}
+.rphotos img{width:100%;height:100%;object-fit:cover;display:block}
 .nophoto{display:flex;align-items:center;justify-content:center;color:#9a97a3;font-size:12px;border:1px dashed #E3E1E8;border-radius:8px;height:100%;min-height:200px}
 .rscale{margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;padding:10px 12px}
 .rscale h4{margin:0 0 8px;font-size:13px}
@@ -154,7 +160,7 @@ nav button.on{color:var(--brand)}
 </head>
 <body>
 <header class="top">
-  <img id="logoTop" src="logo-header.png" alt="Frutea Group">
+  <img id="logoTop" src="data:image/png;base64,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" alt="Frutea Group">
   <h1>Análisis de madurez</h1>
   <span class="total" id="topTotal"></span>
 </header>
@@ -164,8 +170,8 @@ nav button.on{color:var(--brand)}
   <section class="panel on" id="p-datos">
     <h2>Datos del muestreo</h2>
     <p class="sub">Elige la variedad y se cargan sus parámetros de cosecha.</p>
-    <label class="field"><span>Productor</span><input id="f-productor" autocomplete="off"></label>
-    <label class="field"><span>Huerto</span><input id="f-huerto" autocomplete="off"></label>
+    <label class="field"><span>Productor</span><input id="f-productor" list="dl-productor" autocomplete="off" placeholder="Escribe y elige de la lista"><datalist id="dl-productor"></datalist></label>
+    <label class="field"><span>Huerto</span><input id="f-huerto" list="dl-huerto" autocomplete="off"><datalist id="dl-huerto"></datalist></label>
     <div class="row2">
       <label class="field"><span>Variedad</span><select id="f-variedad"></select></label>
       <label class="field"><span>Fecha muestreo</span><input type="date" id="f-fecha"></label>
@@ -202,12 +208,19 @@ nav button.on{color:var(--brand)}
     <div class="scale" id="calScale"></div>
     <div class="sum"><span>Frutos calibrados</span><b id="calTotal">0</b></div>
     <h2 style="margin-top:26px;font-size:20px">Fotos y observaciones</h2>
-    <p class="sub">Las fotos de la distribución de color salen en la ficha.</p>
-    <div class="upl">
-      <label><input type="file" accept="image/*" capture="environment" id="camIn">Tomar foto</label>
-      <label><input type="file" accept="image/*" multiple id="fileIn">Añadir archivo</label>
-    </div>
-    <div class="ph" id="phGrid"></div>
+    <p class="sub">Las fotos salen en la ficha con su etiqueta.</p>
+    <div class="phsec"><h3>Distribución de color</h3>
+      <div class="upl">
+        <label><input type="file" accept="image/*" capture="environment" data-ph="photos">Tomar foto</label>
+        <label><input type="file" accept="image/*" multiple data-ph="photos">Añadir archivo</label>
+      </div>
+      <div class="ph" id="phGrid-photos"></div></div>
+    <div class="phsec"><h3>Pulpa <small>(opcional)</small></h3>
+      <div class="upl">
+        <label><input type="file" accept="image/*" capture="environment" data-ph="pulpa">Tomar foto</label>
+        <label><input type="file" accept="image/*" multiple data-ph="pulpa">Añadir archivo</label>
+      </div>
+      <div class="ph" id="phGrid-pulpa"></div></div>
     <label class="field" style="margin-top:14px"><span>Observaciones</span><textarea id="f-obs" placeholder="Estado de la fruta, partiduras, recomendación de inicio de cosecha…"></textarea></label>
     <button class="btn" data-go="ficha">Ver ficha</button>
   </section>
@@ -269,8 +282,27 @@ const CAL = [
 ];
 const GROUPS = {falta:{lab:"Falta color",hex:"#EDB39A"},light:{lab:"Light",hex:"#D7263D"},dark:{lab:"Dark",hex:"#5E0F1D"}};
 
+/* ===== Productores predefinidos: edita esta lista ===== */
+const PRODUCTORES = [
+  "AGRICOLA E INVERSIONES VALLE HERMOSO",
+  "Agrícola OLPA"
+];
+/* Huertos por productor (opcional): "Productor": ["Huerto 1","Huerto 2"] */
+const HUERTOS = {
+  "AGRICOLA E INVERSIONES VALLE HERMOSO": ["Valle Hermoso"],
+  "Agrícola OLPA": ["OLPA"]
+};
+function getMem(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch(e){ return []; } }
+function addMem(k,v){ v=(v||"").trim(); if(!v) return; const a=getMem(k); if(!a.some(x=>x.toLowerCase()===v.toLowerCase())){ a.push(v); try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} } }
+const uniq = a => [...new Map(a.filter(Boolean).map(x=>[x.toLowerCase(),x])).values()].sort((x,y)=>x.localeCompare(y,"es"));
+function fillLists(){
+  $("dl-productor").innerHTML = uniq([...PRODUCTORES, ...getMem("madurez-productores")]).map(p=>`<option value="${esc(p)}">`).join("");
+  const key = Object.keys(HUERTOS).find(k=>k.toLowerCase()===(S.productor||"").trim().toLowerCase());
+  const hs = uniq([...(key?HUERTOS[key]:[]), ...getMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase())]);
+  $("dl-huerto").innerHTML = hs.map(h=>`<option value="${esc(h)}">`).join("");
+}
 const blank = () => ({productor:"",huerto:"",variedad:"Royal Dawn",cuartel:"",fecha:new Date().toISOString().slice(0,10),resp:"",
-  col:COL.map(()=>0), cal:CAL.map(()=>0), brix:{light:["","","","",""],dark:["","","","",""]}, obs:"", photos:[]});
+  col:COL.map(()=>0), cal:CAL.map(()=>0), brix:{light:["","","","",""],dark:["","","","",""]}, obs:"", photos:[], pulpa:[]});
 let S = blank();
 try{ const s = JSON.parse(localStorage.getItem("madurez-ficha")); if(s && s.col) S = Object.assign(blank(), s); }catch(e){}
 
@@ -280,7 +312,7 @@ const fmt = (n,d=1) => n==null||isNaN(n) ? "–" : n.toLocaleString("es-CL",{min
 const pct = (n,d=0) => n==null||isNaN(n) ? "–" : fmt(n*100,d)+"%";
 const sum = a => a.reduce((x,y)=>x+y,0);
 let saveT;
-function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem("madurez-ficha", JSON.stringify(S)); }catch(e){ try{ localStorage.setItem("madurez-ficha", JSON.stringify(Object.assign({},S,{photos:[]}))); }catch(_){} } },300); }
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem("madurez-ficha", JSON.stringify(S)); }catch(e){ try{ localStorage.setItem("madurez-ficha", JSON.stringify(Object.assign({},S,{photos:[],pulpa:[]}))); }catch(_){} } },300); }
 function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("on"); setTimeout(()=>el.classList.remove("on"),2200); }
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -355,7 +387,7 @@ function renderBrix(){
    <div class="bx-f"><span id="bx-rg-${k}"></span><span><button class="link" data-addbx="${k}">+ Agregar lectura</button></span></div></div>`).join("");
 }
 function renderPhotos(){
-  $("phGrid").innerHTML = S.photos.map((p,i)=>`<div><img src="${p}" alt="Foto ${i+1}"><button data-delph="${i}" aria-label="Quitar foto">×</button></div>`).join("");
+  ["photos","pulpa"].forEach(k=>{ $("phGrid-"+k).innerHTML = S[k].map((p,i)=>`<div><img src="${p}" alt="Foto ${i+1}"><button data-delph="${i}" data-phk="${k}" aria-label="Quitar foto">×</button></div>`).join(""); });
 }
 function updateLive(){
   const R = calc();
@@ -431,9 +463,11 @@ function svgDonut(R){
 /* ---------- Ficha ---------- */
 function reportHTML(){
   const R=calc(); const d = S.fecha? S.fecha.split("-").reverse().join("-") : "";
-  const ph = S.photos.slice(0,4);
-  const phHTML = ph.length ? `<div class="rphotos" style="grid-template-columns:${ph.length>1?"1fr 1fr":"1fr"};grid-template-rows:${ph.length>2?"1fr 1fr":"1fr"}">${ph.map(p=>`<img src="${p}">`).join("")}</div>` : `<div class="nophoto">Sin fotos</div>`;
-  const extra = S.photos.slice(4);
+  const allPh = [...S.photos.map(p=>({p,t:"Distribución de color"})), ...(S.pulpa||[]).map(p=>({p,t:"Pulpa"}))];
+  const fig = o => `<figure><img src="${o.p}"><figcaption>${o.t}</figcaption></figure>`;
+  const ph = allPh.slice(0,4);
+  const phHTML = ph.length ? `<div class="rphotos" style="grid-template-columns:${ph.length>1?"1fr 1fr":"1fr"};grid-template-rows:${ph.length>2?"1fr 1fr":"1fr"}">${ph.map(fig).join("")}</div>` : `<div class="nophoto">Sin fotos</div>`;
+  const extra = allPh.slice(4);
   return `<div class="rep" id="repPage1">
    <div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Análisis de madurez de cerezas</b><span>Muestreo ${esc(d)}</span></div></div>
    <div class="rep-info">
@@ -465,7 +499,7 @@ function reportHTML(){
    <div class="robs"><h4>Observaciones</h4><p>${esc(S.obs)||"Sin observaciones."}</p></div>
    <div class="rfoot"><span>${S.resp?"Responsable: "+esc(S.resp):""}</span><span>Frutea Group</span></div>
   </div>
-  ${extra.length?`<div class="rep rep-p2" id="repPage2"><div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Registro fotográfico</b><span>${esc(S.variedad)}, ${esc(S.cuartel)}</span></div></div><div class="grid">${extra.map(p=>`<img src="${p}">`).join("")}</div></div>`:""}`;
+  ${extra.length?`<div class="rep rep-p2" id="repPage2"><div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Registro fotográfico</b><span>${esc(S.variedad)}, ${esc(S.cuartel)}</span></div></div><div class="grid">${extra.map(fig).join("")}</div></div>`:""}`;
 }
 function renderFicha(){
   const pv=$("pv"), inn=$("pvIn");
@@ -478,6 +512,7 @@ function renderFicha(){
 
 /* ---------- PDF ---------- */
 async function exportPDF(){
+  addMem("madurez-productores",S.productor); addMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase(),S.huerto);
   const btn=$("btnPdf"); btn.disabled=true; btn.textContent="Generando PDF…";
   try{
     const host=document.createElement("div");
@@ -495,7 +530,8 @@ async function exportPDF(){
       else { const k=297/h; pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",(210-w*k)/2,0,w*k,297); }
     }
     host.remove();
-    const name = `Madurez_${S.variedad}_${S.cuartel||"cuartel"}_${S.fecha}`.replace(/[^\wáéíóúñÁÉÍÓÚÑ-]+/g,"_")+".pdf";
+    const fch = S.fecha ? S.fecha.split("-").reverse().join("-") : "";
+    const name = [S.productor||"Productor", S.variedad, fch].join("_").replace(/[^\wáéíóúñÁÉÍÓÚÑ-]+/g,"_").replace(/_+/g,"_").replace(/^_|_$/g,"")+".pdf";
     const blob = pdf.output("blob"); const file = new File([blob],name,{type:"application/pdf"});
     if(navigator.canShare && navigator.canShare({files:[file]})){
       try{ await navigator.share({files:[file],title:name}); }catch(e){ if(e.name!=="AbortError") throw e; }
@@ -508,7 +544,7 @@ async function exportPDF(){
 }
 
 /* ---------- Fotos ---------- */
-function addFiles(files){
+function addFiles(files,key){
   [...files].forEach(f=>{
     if(!f.type.startsWith("image/")) return;
     const img=new Image(), url=URL.createObjectURL(f);
@@ -516,8 +552,8 @@ function addFiles(files){
       const M=1200, k=Math.min(1,M/Math.max(img.width,img.height));
       const c=document.createElement("canvas"); c.width=img.width*k; c.height=img.height*k;
       c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-      if(S.photos.length>=8){ toast("Máximo 8 fotos"); return; }
-      S.photos.push(c.toDataURL("image/jpeg",.8)); URL.revokeObjectURL(url); renderPhotos(); save();
+      if(S.photos.length+S.pulpa.length>=10){ toast("Máximo 10 fotos"); return; }
+      S[key].push(c.toDataURL("image/jpeg",.8)); URL.revokeObjectURL(url); renderPhotos(); save();
     };
     img.src=url;
   });
@@ -537,7 +573,7 @@ document.addEventListener("click",e=>{
     const inp=t.parentElement.querySelector("input"); inp.value=S[a][i]||""; if(navigator.vibrate) navigator.vibrate(8); updateLive(); save(); }
   if(t.dataset.addbx){ S.brix[t.dataset.addbx].push(""); renderBrix(); updateLive(); save();
     const ins=document.querySelectorAll(`[data-bx="${t.dataset.addbx}"]`); ins[ins.length-1].focus(); }
-  if(t.dataset.delph){ S.photos.splice(+t.dataset.delph,1); renderPhotos(); save(); }
+  if(t.dataset.delph){ S[t.dataset.phk].splice(+t.dataset.delph,1); renderPhotos(); save(); }
 });
 document.addEventListener("input",e=>{
   const t=e.target;
@@ -554,8 +590,10 @@ $("f-variedad").innerHTML = VAR.map(v=>`<option>${esc(v.n)}</option>`).join("");
 bind("f-productor","productor"); bind("f-huerto","huerto"); bind("f-cuartel","cuartel"); bind("f-resp","resp");
 bind("f-fecha","fecha"); bind("f-obs","obs"); bind("f-variedad","variedad",renderParams);
 $("f-variedad").addEventListener("change",()=>{ S.variedad=$("f-variedad").value; renderParams(); save(); });
-$("camIn").addEventListener("change",e=>{ addFiles(e.target.files); e.target.value=""; });
-$("fileIn").addEventListener("change",e=>{ addFiles(e.target.files); e.target.value=""; });
+document.querySelectorAll("[data-ph]").forEach(inp=>inp.addEventListener("change",e=>{ addFiles(e.target.files,inp.dataset.ph); e.target.value=""; }));
+$("f-productor").addEventListener("input",fillLists);
+$("f-productor").addEventListener("change",()=>{ addMem("madurez-productores",S.productor); fillLists(); });
+$("f-huerto").addEventListener("change",()=>{ addMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase(),S.huerto); fillLists(); });
 $("btnPdf").addEventListener("click",exportPDF);
 $("btnNew").addEventListener("click",()=>{
   if(!confirm("¿Borrar los datos actuales y empezar una ficha nueva? Se mantienen productor, huerto y responsable.")) return;
@@ -564,7 +602,7 @@ $("btnNew").addEventListener("click",()=>{
   init(); toast("Ficha nueva lista");
 });
 window.addEventListener("resize",()=>{ if($("p-ficha").classList.contains("on")) renderFicha(); });
-function init(){ $("f-variedad").value=S.variedad; renderParams(); renderCounters(); renderBrix(); renderPhotos(); updateLive(); }
+function init(){ if(!Array.isArray(S.pulpa)) S.pulpa=[]; fillLists(); $("f-variedad").value=S.variedad; renderParams(); renderCounters(); renderBrix(); renderPhotos(); updateLive(); }
 init();
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 </script>
