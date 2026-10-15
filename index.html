@@ -181,6 +181,7 @@ nav button.on{color:var(--brand)}
     <div class="params" id="params"></div>
     <button class="btn" data-go="color">Contar color</button>
     <button class="btn ghost" id="btnNew">Empezar ficha nueva</button>
+    <p style="text-align:center;color:var(--ink2);font-size:12px;margin-top:18px">Versión 6</p>
   </section>
 
   <!-- COLOR -->
@@ -604,7 +605,7 @@ $("btnNew").addEventListener("click",()=>{
 window.addEventListener("resize",()=>{ if($("p-ficha").classList.contains("on")) renderFicha(); });
 function init(){ if(!Array.isArray(S.pulpa)) S.pulpa=[]; fillLists(); $("f-variedad").value=S.variedad; renderParams(); renderCounters(); renderBrix(); renderPhotos(); updateLive(); }
 init();
-if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(()=>{})); }
 </script>
 </body>
 </html>
