@@ -120,10 +120,10 @@ nav button.on{color:var(--brand)}
 .rep-h .t{text-align:right}
 .rep-h .t b{display:block;font-size:20px;font-weight:800;letter-spacing:-.01em}
 .rep-h .t span{font-size:12px;color:#5B5866}
-.rep-info{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;overflow:hidden}
+.rep-info{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:0;margin-top:14px;border:1px solid #E3E1E8;border-radius:8px;overflow:hidden}
 .rep-info div{padding:7px 10px;border-right:1px solid #E3E1E8;border-bottom:1px solid #E3E1E8}
-.rep-info div:nth-child(3n){border-right:none}
-.rep-info div:nth-last-child(-n+3){border-bottom:none}
+.rep-info div:nth-child(4n){border-right:none}
+.rep-info div:nth-last-child(-n+4){border-bottom:none}
 .rep-info small{display:block;font-size:10px;color:#5B5866;font-weight:600}
 .rep-info b{font-size:13px;font-weight:700}
 .verdict{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:10px;margin-top:14px}
@@ -171,7 +171,10 @@ nav button.on{color:var(--brand)}
     <h2>Datos del muestreo</h2>
     <p class="sub">Elige la variedad y se cargan sus parámetros de cosecha.</p>
     <label class="field"><span>Productor</span><input id="f-productor" list="dl-productor" autocomplete="off" placeholder="Escribe y elige de la lista"><datalist id="dl-productor"></datalist></label>
-    <label class="field"><span>Huerto</span><input id="f-huerto" list="dl-huerto" autocomplete="off"><datalist id="dl-huerto"></datalist></label>
+    <div class="row2">
+      <label class="field"><span>Predio / Huerto</span><input id="f-huerto" list="dl-huerto" autocomplete="off"><datalist id="dl-huerto"></datalist></label>
+      <label class="field"><span>Zona</span><input id="f-zona" list="dl-zona" autocomplete="off"><datalist id="dl-zona"></datalist></label>
+    </div>
     <div class="row2">
       <label class="field"><span>Variedad</span><select id="f-variedad"></select></label>
       <label class="field"><span>Fecha muestreo</span><input type="date" id="f-fecha"></label>
@@ -181,7 +184,7 @@ nav button.on{color:var(--brand)}
     <div class="params" id="params"></div>
     <button class="btn" data-go="color">Contar color</button>
     <button class="btn ghost" id="btnNew">Empezar ficha nueva</button>
-    <p style="text-align:center;color:var(--ink2);font-size:12px;margin-top:18px">Versión 6</p>
+    <p style="text-align:center;color:var(--ink2);font-size:12px;margin-top:18px">Versión 7</p>
   </section>
 
   <!-- COLOR -->
@@ -284,25 +287,46 @@ const CAL = [
 const GROUPS = {falta:{lab:"Falta color",hex:"#EDB39A"},light:{lab:"Light",hex:"#D7263D"},dark:{lab:"Dark",hex:"#5E0F1D"}};
 
 /* ===== Productores predefinidos: edita esta lista ===== */
+/* Para agregar uno nuevo copia una línea y cambia los datos:
+   {n:"Razón social", predios:[{p:"Predio", z:"Zona"}]}, */
 const PRODUCTORES = [
-  "AGRICOLA E INVERSIONES VALLE HERMOSO",
-  "Agrícola OLPA"
+  {n:"Agricola Antilhue Spa", predios:[{p:"Morza", z:"Teno-Morza"}]},
+  {n:"Agricola E Inversiones Valle Hermoso Spa", predios:[{p:"Valle Hermoso", z:"Paine"}]},
+  {n:"Agricola Las Palmeras Spa", predios:[{p:"Las Palmeras", z:"Nancagua"}]},
+  {n:"Agricola Olpa Spa", predios:[{p:"Rosario Rio", z:"Peumo"}]},
+  {n:"Agricola San Antonio De Chimbarongo Ltda", predios:[{p:"San Antonio", z:"Chimbarongo"}]},
+  {n:"Agrícola Casa Silva Ltda", predios:[{p:"Mario Pablo Silva", z:"San Fernando"}]},
+  {n:"Agrícola Tierra Buena Ltda", predios:[{p:"", z:"San Fernando"}]},
+  {n:"Diego Antonio Pacheco Alvarez", predios:[{p:"La Marinana", z:"Roma"}, {p:"Polonia", z:"Polonia"}, {p:"Taitao", z:"Roma"}, {p:"Taitao Lapins", z:"Roma"}, {p:"Taulemu", z:"Placilla"}]},
+  {n:"Gabriela Adela Videla Valdebenito", predios:[{p:"San Juan De La Sierra", z:"Chimbarongo"}, {p:"Santa Isabel", z:"Chimbarongo"}]},
+  {n:"Luis Andres Meza Videla", predios:[{p:"Tinguiririca", z:"Tinguiririca"}]},
+  {n:"Santa Rosa Del Maule Spa", predios:[{p:"Hernán Garfias", z:"Sagrada Familia"}]},
+  {n:"Sociedad Agricola Y Comercial Espinoza Y Cia Ltda", predios:[{p:"Puquillay", z:"Puquillay"}]},
+  {n:"Suc Adolfo Segundo Espinoza Riveros", predios:[{p:"Puquillay", z:"Puquillay"}]}
 ];
-/* Huertos por productor (opcional): "Productor": ["Huerto 1","Huerto 2"] */
-const HUERTOS = {
-  "AGRICOLA E INVERSIONES VALLE HERMOSO": ["Valle Hermoso"],
-  "Agrícola OLPA": ["OLPA"]
-};
 function getMem(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch(e){ return []; } }
 function addMem(k,v){ v=(v||"").trim(); if(!v) return; const a=getMem(k); if(!a.some(x=>x.toLowerCase()===v.toLowerCase())){ a.push(v); try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} } }
 const uniq = a => [...new Map(a.filter(Boolean).map(x=>[x.toLowerCase(),x])).values()].sort((x,y)=>x.localeCompare(y,"es"));
+const findProd = n => PRODUCTORES.find(x=>x.n.toLowerCase()===(n||"").trim().toLowerCase());
 function fillLists(){
-  $("dl-productor").innerHTML = uniq([...PRODUCTORES, ...getMem("madurez-productores")]).map(p=>`<option value="${esc(p)}">`).join("");
-  const key = Object.keys(HUERTOS).find(k=>k.toLowerCase()===(S.productor||"").trim().toLowerCase());
-  const hs = uniq([...(key?HUERTOS[key]:[]), ...getMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase())]);
-  $("dl-huerto").innerHTML = hs.map(h=>`<option value="${esc(h)}">`).join("");
+  $("dl-productor").innerHTML = uniq([...PRODUCTORES.map(x=>x.n), ...getMem("madurez-productores")]).map(p=>`<option value="${esc(p)}">`).join("");
+  const pr = findProd(S.productor), key=(S.productor||"").trim().toLowerCase();
+  $("dl-huerto").innerHTML = uniq([...(pr?pr.predios.map(x=>x.p):[]), ...getMem("madurez-huertos:"+key)]).map(h=>`<option value="${esc(h)}">`).join("");
+  $("dl-zona").innerHTML = uniq([...PRODUCTORES.flatMap(x=>x.predios.map(y=>y.z)), ...getMem("madurez-zonas")]).map(z=>`<option value="${esc(z)}">`).join("");
 }
-const blank = () => ({productor:"",huerto:"",variedad:"Royal Dawn",cuartel:"",fecha:new Date().toISOString().slice(0,10),resp:"",
+function autoFill(from){
+  const pr = findProd(S.productor); if(!pr) return;
+  if(from==="productor"){
+    S.productor = pr.n; $("f-productor").value = pr.n;
+    if(pr.predios.length===1){ S.huerto=pr.predios[0].p; S.zona=pr.predios[0].z; }
+    else if(!pr.predios.some(x=>x.p.toLowerCase()===(S.huerto||"").toLowerCase())){ S.huerto=""; const zs=[...new Set(pr.predios.map(x=>x.z))]; S.zona = zs.length===1? zs[0] : ""; }
+  } else {
+    const pd = pr.predios.find(x=>x.p.toLowerCase()===(S.huerto||"").trim().toLowerCase());
+    if(pd){ S.huerto=pd.p; S.zona=pd.z; }
+  }
+  $("f-huerto").value=S.huerto||""; $("f-zona").value=S.zona||""; save();
+}
+const blank = () => ({productor:"",huerto:"",zona:"",variedad:"Royal Dawn",cuartel:"",fecha:new Date().toISOString().slice(0,10),resp:"",
   col:COL.map(()=>0), cal:CAL.map(()=>0), brix:{light:["","","","",""],dark:["","","","",""]}, obs:"", photos:[], pulpa:[]});
 let S = blank();
 try{ const s = JSON.parse(localStorage.getItem("madurez-ficha")); if(s && s.col) S = Object.assign(blank(), s); }catch(e){}
@@ -473,11 +497,13 @@ function reportHTML(){
    <div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Análisis de madurez de cerezas</b><span>Muestreo ${esc(d)}</span></div></div>
    <div class="rep-info">
      <div><small>Productor</small><b>${esc(S.productor)||"–"}</b></div>
-     <div><small>Huerto</small><b>${esc(S.huerto)||"–"}</b></div>
+     <div><small>Predio</small><b>${esc(S.huerto)||"–"}</b></div>
+     <div><small>Zona</small><b>${esc(S.zona)||"–"}</b></div>
      <div><small>Variedad</small><b>${esc(S.variedad)}</b></div>
      <div><small>Cuartel</small><b>${esc(S.cuartel)||"–"}</b></div>
      <div><small>Fecha muestreo</small><b>${esc(d)}</b></div>
-     <div><small>Muestra</small><b>${R.nCol} frutos color, ${R.nCal} calibre</b></div>
+     <div><small>Muestra</small><b>${R.nCol} color, ${R.nCal} calibre</b></div>
+     <div><small>Responsable</small><b>${esc(S.resp)||"–"}</b></div>
    </div>
    <div class="verdict">
      <div class="st" style="background:${R.st.c}"><small>Diagnóstico</small><b>${R.st.t}</b><em>${esc(R.st.d)}</em></div>
@@ -498,7 +524,7 @@ function reportHTML(){
      <div class="lg">${COL.map((c,i)=>`<span><i style="background:${c.hex}"></i><span>${c.k} ${c.lab}<b>${pct(R.colP[i])}</b></span></span>`).join("")}</div>
    </div>
    <div class="robs"><h4>Observaciones</h4><p>${esc(S.obs)||"Sin observaciones."}</p></div>
-   <div class="rfoot"><span>${S.resp?"Responsable: "+esc(S.resp):""}</span><span>Frutea Group</span></div>
+   <div class="rfoot"><span></span><span>Frutea Group</span></div>
   </div>
   ${extra.length?`<div class="rep rep-p2" id="repPage2"><div class="rep-h"><img src="${LOGO}" alt="Frutea"><div class="t"><b>Registro fotográfico</b><span>${esc(S.variedad)}, ${esc(S.cuartel)}</span></div></div><div class="grid">${extra.map(fig).join("")}</div></div>`:""}`;
 }
@@ -588,18 +614,19 @@ document.addEventListener("keydown",e=>{
 document.addEventListener("focusin",e=>{ if(e.target.dataset.arr) e.target.select(); });
 const bind=(id,key,cb)=>{ const el=$(id); el.value=S[key]||""; el.addEventListener("input",()=>{ S[key]=el.value; save(); cb&&cb(); }); };
 $("f-variedad").innerHTML = VAR.map(v=>`<option>${esc(v.n)}</option>`).join("");
-bind("f-productor","productor"); bind("f-huerto","huerto"); bind("f-cuartel","cuartel"); bind("f-resp","resp");
+bind("f-productor","productor"); bind("f-huerto","huerto"); bind("f-zona","zona"); bind("f-cuartel","cuartel"); bind("f-resp","resp");
 bind("f-fecha","fecha"); bind("f-obs","obs"); bind("f-variedad","variedad",renderParams);
 $("f-variedad").addEventListener("change",()=>{ S.variedad=$("f-variedad").value; renderParams(); save(); });
 document.querySelectorAll("[data-ph]").forEach(inp=>inp.addEventListener("change",e=>{ addFiles(e.target.files,inp.dataset.ph); e.target.value=""; }));
 $("f-productor").addEventListener("input",fillLists);
-$("f-productor").addEventListener("change",()=>{ addMem("madurez-productores",S.productor); fillLists(); });
-$("f-huerto").addEventListener("change",()=>{ addMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase(),S.huerto); fillLists(); });
+$("f-productor").addEventListener("change",()=>{ autoFill("productor"); if(!findProd(S.productor)) addMem("madurez-productores",S.productor); fillLists(); });
+$("f-huerto").addEventListener("change",()=>{ autoFill("huerto"); addMem("madurez-huertos:"+(S.productor||"").trim().toLowerCase(),S.huerto); fillLists(); });
+$("f-zona").addEventListener("change",()=>{ addMem("madurez-zonas",S.zona); fillLists(); });
 $("btnPdf").addEventListener("click",exportPDF);
 $("btnNew").addEventListener("click",()=>{
   if(!confirm("¿Borrar los datos actuales y empezar una ficha nueva? Se mantienen productor, huerto y responsable.")) return;
   const keep={productor:S.productor,huerto:S.huerto,resp:S.resp}; S=Object.assign(blank(),keep);
-  ["f-productor","f-huerto","f-cuartel","f-resp","f-fecha","f-obs","f-variedad"].forEach(id=>{ $(id).value=S[id.slice(2)]||""; });
+  ["f-productor","f-huerto","f-zona","f-cuartel","f-resp","f-fecha","f-obs","f-variedad"].forEach(id=>{ $(id).value=S[id.slice(2)]||""; });
   init(); toast("Ficha nueva lista");
 });
 window.addEventListener("resize",()=>{ if($("p-ficha").classList.contains("on")) renderFicha(); });

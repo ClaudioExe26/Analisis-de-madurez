@@ -1,5 +1,5 @@
 // Cambia el número de versión cada vez que subas cambios a GitHub
-const CACHE = "madurez-v6";
+const CACHE = "madurez-v7";
 const FILES = [
   "./", "./index.html", "./manifest.json",
   "./html2canvas.min.js", "./jspdf.umd.min.js",
